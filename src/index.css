@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-script: "Great Vibes", cursive;
+  --color-cream: #fbf6f0;
+  --color-blush: #f8c8dc;
+  --color-rose: #e8b4b8;
+  --color-gold: #c9a27c;
+  --color-lavender: #e4d4f4;
+  --color-mint: #cfe8d8;
+  --color-ink: #5c4a55;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #fde8f0 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, #efe6fa 0%, transparent 50%),
+    radial-gradient(800px 500px at 50% 100%, #e7f4ec 0%, transparent 55%),
+    #fbf6f0;
+}
+
+.font-script {
+  font-family: var(--font-script);
+}
+
+.envelope-scene {
+  perspective: 900px;
+}
+
+.envelope-flap {
+  transform-origin: top center;
+  backface-visibility: hidden;
+}
