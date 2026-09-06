@@ -124,6 +124,21 @@ export function getYouTubeEmbedUrl(url) {
     : null
 }
 
+export function getCountdownRemaining(targetDateStr) {
+  if (!targetDateStr) return null
+  const target = new Date(targetDateStr).getTime()
+  const now = new Date().getTime()
+  const diff = target - now
+  if (diff <= 0) return null
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+  return `${days}d ${hours}h ${minutes}m ${seconds}s`
+}
+
 export const defaultLetters = [
   {
     id: 'stressful-day',
@@ -136,6 +151,10 @@ export const defaultLetters = [
     message:
       "Hey {recipient}. Put the to-do list down for a minute and breathe with me. You do not have to hold the whole world today. I am so proud of how you keep showing up, even when it feels heavy. Let this be your pause: you are safe, you are capable, and you are deeply loved by {sender}. Come home to my arms in your mind for a second — I've got you. Drink some water, stretch your shoulders, and remember that this day cannot take away how wonderful you are.",
     gifUrl: 'https://media.giphy.com/media/l0MYEqEzwMWFCg8rm/giphy.gif',
+    photos: [
+      { url: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600', caption: 'Cozy moments together ☕' },
+      { url: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=600', caption: 'Always holding your hand 🤝' }
+    ],
     songTitle: 'Perfect - Ed Sheeran',
     youtubeUrl: 'https://www.youtube.com/watch?v=2Vv-BfVoq4g',
   },
@@ -150,23 +169,28 @@ export const defaultLetters = [
     message:
       "Dearest {recipient}, if you ever wonder whether my love for you has a limit, it does not. I love the way you laugh when you try not to, the way you care for people, the quiet courage you think nobody notices. You are my favorite place. Not because everything is perfect, but because it is us. I choose you on the easy days and the tangled ones. Consider this a little love note from {sender} folded into your pocket: you are my always.",
     gifUrl: 'https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif',
+    photos: [
+      { url: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600', caption: 'Our favorite sunset date 🌅' },
+      { url: 'https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=600', caption: 'Pure happiness with you ✨' }
+    ],
     songTitle: 'Until I Found You - Stephen Sanchez',
     youtubeUrl: 'https://www.youtube.com/watch?v=GxldQ9eX2fc',
+    pinCode: '0412', // Secret 4-digit PIN lock example
   },
   {
-    id: 'friday-night',
-    title: 'Open on Friday night at 8 PM',
+    id: 'anniversary-countdown',
+    title: 'Open on our upcoming Anniversary 🎉',
     themeColor: '#E4D4F4',
     flapColor: '#D4BEEA',
     bodyColor: '#F4ECFB',
     waxColor: '#C9A27C',
     accentClass: 'from-violet-100 via-cream to-fuchsia-50',
     message:
-      "Happy Friday, {recipient}! The lights are soft, and this hour belongs to us. Imagine {sender} just walked in with something sweet and a romantic playlist already queued. No rush, no proving anything — just us, a little silly, a little close. Put your phone on the table, press play, and pretend I am sitting right across from you, grinning because I get to love you into the weekend.",
+      "Happy Anniversary, {recipient}! Another year of laughter, silly jokes, late-night talks, and growing together. Thank you for being my rock, my best friend, and my greatest adventure. Here is to a lifetime more with {sender}!",
     gifUrl: 'https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif',
     songTitle: 'Lover - Taylor Swift',
     youtubeUrl: 'https://www.youtube.com/watch?v=-BjZmE2gtdo',
-    unlockedWhen: { weekday: 5, hour: 20, minute: 0 },
+    unlockDate: '2026-12-25T00:00:00', // Live Countdown example
   },
   {
     id: 'miss-me',
@@ -250,6 +274,9 @@ export const defaultQuizQuestions = [
 const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 export function isLetterUnlocked(letter, now = new Date()) {
+  if (letter.unlockDate) {
+    return new Date(letter.unlockDate).getTime() <= now.getTime()
+  }
   if (!letter.unlockedWhen) return true
   const { weekday, hour, minute = 0 } = letter.unlockedWhen
   const day = now.getDay()
@@ -261,6 +288,9 @@ export function isLetterUnlocked(letter, now = new Date()) {
 }
 
 export function getUnlockHint(letter) {
+  if (letter.unlockDate) {
+    return `unlocks on ${new Date(letter.unlockDate).toLocaleDateString()}`
+  }
   if (!letter.unlockedWhen) return null
   const { weekday, hour, minute = 0 } = letter.unlockedWhen
   const hour12 = hour % 12 === 0 ? 12 : hour % 12
