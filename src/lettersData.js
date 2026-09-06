@@ -175,7 +175,7 @@ export const defaultLetters = [
     ],
     songTitle: 'Until I Found You - Stephen Sanchez',
     youtubeUrl: 'https://www.youtube.com/watch?v=GxldQ9eX2fc',
-    pinCode: '0412', // Secret 4-digit PIN lock example
+    pinCode: '0412',
   },
   {
     id: 'anniversary-countdown',
@@ -190,7 +190,7 @@ export const defaultLetters = [
     gifUrl: 'https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif',
     songTitle: 'Lover - Taylor Swift',
     youtubeUrl: 'https://www.youtube.com/watch?v=-BjZmE2gtdo',
-    unlockDate: '2026-12-25T00:00:00', // Live Countdown example
+    unlockDate: '2026-12-25T00:00:00',
   },
   {
     id: 'miss-me',

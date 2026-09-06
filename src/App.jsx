@@ -1,11 +1,12 @@
 import confetti from 'canvas-confetti'
-import { Compass, Heart, Moon, Send, Sparkles, Sun, Trophy } from 'lucide-react'
+import { Compass, Gift, Heart, Moon, Send, Sparkles, Sun, Trophy } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import EnvelopeCard from './EnvelopeCard.jsx'
 import LetterModal from './LetterModal.jsx'
 import AmbiencePlayer from './components/AmbiencePlayer.jsx'
 import CoupleBucketList from './components/CoupleBucketList.jsx'
 import CoupleQuiz from './components/CoupleQuiz.jsx'
+import CreateGiftWizardModal from './components/CreateGiftWizardModal.jsx'
 import PersonalizeModal from './components/PersonalizeModal.jsx'
 import PinModal from './components/PinModal.jsx'
 import WriteReplyModal from './components/WriteReplyModal.jsx'
@@ -38,7 +39,7 @@ function celebrate(colors) {
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('letters') // 'letters' | 'quiz' | 'bucket'
+  const [activeTab, setActiveTab] = useState('letters')
   const [darkMode, setDarkMode] = useState(false)
   const [openedIds, setOpenedIds] = useState(loadOpenedIds)
   const [activeLetter, setActiveLetter] = useState(null)
@@ -46,6 +47,7 @@ export default function App() {
   const [personalization, setPersonalization] = useState(getInitialPersonalization)
   const [isPersonalizeOpen, setIsPersonalizeOpen] = useState(false)
   const [isWriteReplyOpen, setIsWriteReplyOpen] = useState(false)
+  const [isWizardOpen, setIsWizardOpen] = useState(false)
 
   const { recipient, sender, incomingQuizResult, incomingReplyLetter } = personalization
 
@@ -146,7 +148,7 @@ export default function App() {
           </button>
         </div>
 
-        {/* Right Utilities: Dark Mode, Ambience Player, Actions */}
+        {/* Right Utilities & Gift Wizard Button */}
         <div className="flex items-center justify-center gap-2 flex-wrap self-center sm:self-auto">
           <AmbiencePlayer />
 
@@ -161,18 +163,18 @@ export default function App() {
 
           <button
             type="button"
-            onClick={() => setIsWriteReplyOpen(true)}
-            className="flex items-center gap-1.5 rounded-full bg-rose-500 px-3.5 py-2 text-xs font-bold text-white shadow transition hover:bg-rose-600"
+            onClick={() => setIsWizardOpen(true)}
+            className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-rose-500 to-pink-600 px-4 py-2 text-xs font-bold text-white shadow-md transition hover:opacity-95 animate-pulse"
           >
-            <Send className="h-3.5 w-3.5" /> Reply ✉️
+            <Gift className="h-3.5 w-3.5" /> Make Gift Box 🎁
           </button>
+
           <button
             type="button"
-            onClick={() => setIsPersonalizeOpen(true)}
-            className="flex items-center gap-1.5 rounded-full bg-white/90 dark:bg-gray-800 px-3.5 py-2 text-xs font-semibold text-rose-500 shadow-sm border border-rose-100 dark:border-gray-700"
+            onClick={() => setIsWriteReplyOpen(true)}
+            className="flex items-center gap-1.5 rounded-full bg-rose-100 dark:bg-gray-800 px-3.5 py-2 text-xs font-semibold text-rose-600 dark:text-rose-300 shadow-sm border border-rose-200 dark:border-gray-700"
           >
-            <Sparkles className="h-3.5 w-3.5 text-rose-400" />
-            Personalize 💌
+            <Send className="h-3.5 w-3.5" /> Reply ✉️
           </button>
         </div>
       </div>
@@ -244,7 +246,14 @@ export default function App() {
 
       <footer className="mt-12 text-center text-sm text-[#8a7380] dark:text-gray-400 space-y-3">
         <div>Made with love by {sender} for {recipient}. Ready to deploy anywhere!</div>
-        <div>
+        <div className="flex justify-center gap-3 flex-wrap">
+          <button
+            type="button"
+            onClick={() => setIsWizardOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-rose-400 to-pink-500 px-4 py-2 text-xs font-bold text-white shadow"
+          >
+            <Gift className="h-3.5 w-3.5" /> Make a Gift Box for Someone 🎁
+          </button>
           <button
             type="button"
             onClick={() => setIsWriteReplyOpen(true)}
@@ -288,6 +297,17 @@ export default function App() {
         onClose={() => setIsWriteReplyOpen(false)}
         recipient={sender}
         sender={recipient}
+      />
+
+      <CreateGiftWizardModal
+        isOpen={isWizardOpen}
+        onClose={() => setIsWizardOpen(false)}
+        initialRecipient={recipient}
+        initialSender={sender}
+        onComplete={(data) => {
+          setPersonalization((prev) => ({ ...prev, ...data }))
+          updateUrlWithPersonalization(data.recipient, data.sender)
+        }}
       />
     </div>
   )
