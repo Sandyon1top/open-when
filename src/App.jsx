@@ -163,13 +163,7 @@ export default function App() {
             {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
 
-          <button
-            type="button"
-            onClick={() => setIsNaughtyWheelOpen(true)}
-            className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 px-3.5 py-2 text-xs font-bold text-white shadow-md transition hover:opacity-90"
-          >
-            🔥 Spicy Wheel
-          </button>
+
 
           <button
             type="button"
@@ -274,6 +268,24 @@ export default function App() {
           </button>
         </div>
       </footer>
+
+
+      {/* Floating Action Button for Spicy Wheel */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <button
+          type="button"
+          onClick={() => setIsNaughtyWheelOpen(true)}
+          className="group relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 shadow-2xl transition-all duration-300 hover:scale-110 hover:shadow-pink-500/50"
+        >
+          <div className="absolute -inset-2 animate-pulse rounded-full bg-pink-500/30 opacity-75 blur-md" />
+          <span className="relative z-10 text-2xl drop-shadow-md">🔥</span>
+          
+          {/* Tooltip */}
+          <span className="absolute -top-12 right-0 w-32 scale-0 rounded-xl bg-gray-900 px-3 py-2 text-center text-xs font-bold text-white shadow-xl transition-all duration-200 group-hover:scale-100 dark:bg-white dark:text-gray-900">
+            Play Spicy Wheel
+          </span>
+        </button>
+      </div>
 
       <LetterModal
         letter={activeLetter}
