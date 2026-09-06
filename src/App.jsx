@@ -110,9 +110,9 @@ export default function App() {
   }
 
   return (
-    <div className={`mx-auto min-h-svh max-w-5xl px-4 pb-16 pt-6 sm:px-6 transition-colors duration-300 ${darkMode ? 'dark bg-gray-900 text-gray-100' : 'bg-[#fffaf6] text-[#5c4a55]'}`}>
-      {/* Top Utility Controls Bar */}
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className={`mx-auto min-h-svh max-w-5xl px-4 pb-16 pt-6 sm:px-6 transition-colors duration-300 ${darkMode ? 'dark text-gray-100' : 'text-[#5c4a55]'}`}>
+      {/* Premium Sticky Navbar */}
+      <div className="sticky top-4 z-40 mb-10 flex flex-col gap-4 rounded-3xl bg-white/70 dark:bg-gray-900/70 p-4 shadow-xl backdrop-blur-md border border-white/50 dark:border-gray-700/50 sm:flex-row sm:items-center sm:justify-between">
         {/* Navigation Tabs */}
         <div className="flex rounded-full bg-white/90 dark:bg-gray-800/90 p-1.5 shadow-md border border-rose-100/80 dark:border-gray-700 backdrop-blur-sm self-center sm:self-auto">
           <button
@@ -206,14 +206,15 @@ export default function App() {
 
       {activeTab === 'letters' ? (
         <>
-          <header className="mb-10 text-center">
-            <p className="font-script text-4xl text-rose-400 sm:text-5xl">
-              Open when... {recipient !== 'My Love' ? `For ${recipient}` : ''}
-            </p>
-            <h1 className="mt-2 font-serif text-4xl font-semibold text-[#5c4a55] dark:text-gray-100 sm:text-5xl">
-              A little box of letters for {recipient}
+          <header className="mb-12 text-center">
+            <h1 className="font-serif text-5xl font-extrabold tracking-tight sm:text-7xl">
+              <span className="bg-gradient-to-r from-rose-400 via-pink-500 to-purple-500 bg-clip-text text-transparent drop-shadow-sm">
+                Open When...
+              </span>
+              <br />
+              <span className="text-[#5c4a55] dark:text-gray-100 text-4xl sm:text-5xl">for {recipient}</span>
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-[#7a6570] dark:text-gray-300 leading-relaxed">
+            <p className="mx-auto mt-6 max-w-xl text-lg text-[#7a6570] dark:text-gray-300 leading-relaxed">
               Whenever the day asks too much, or too little, these envelopes are waiting for you.
               Open the one that fits this moment.
             </p>

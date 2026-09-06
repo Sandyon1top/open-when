@@ -27,20 +27,20 @@ export default function EnvelopeCard({ letter, opened, onOpen, recipient, sender
         unlocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-90'
       }`}
     >
-      <article className="overflow-hidden rounded-3xl bg-[#fffaf6] dark:bg-gray-800 shadow-md transition-shadow duration-300 group-hover:shadow-xl border border-rose-100/60 dark:border-gray-700">
+      <article className="overflow-hidden rounded-3xl bg-white/60 dark:bg-gray-800/80 backdrop-blur-xl shadow-lg transition-all duration-300 group-hover:shadow-2xl border border-white/60 dark:border-gray-600/50">
         <div
           className="relative h-44 w-full p-4 overflow-hidden"
           style={{ background: letter.bodyColor }}
         >
           {/* Envelope flap aesthetic */}
           <div
-            className="absolute left-1/2 top-0 h-28 w-4/5 -translate-x-1/2 rounded-b-[48px] shadow-sm transition-transform duration-300 group-hover:translate-y-1"
+            className="absolute left-1/2 top-0 h-28 w-4/5 -translate-x-1/2 rounded-b-[48px] shadow-md transition-transform duration-300 group-hover:translate-y-2 border-b border-white/20"
             style={{ background: letter.flapColor }}
           />
 
           {/* Envelope seal icon */}
           <div
-            className="absolute left-1/2 top-20 z-10 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full shadow-md transition-transform duration-300 group-hover:scale-110"
+            className="absolute left-1/2 top-20 z-10 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full shadow-xl ring-4 ring-white/30 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12"
             style={{ background: letter.waxColor }}
           >
             {letter.pinCode ? (
