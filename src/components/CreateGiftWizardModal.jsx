@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { PERSONALIZE_KEY, getShareableLink, updateUrlWithPersonalization } from '../lettersData.js'
 
 export default function CreateGiftWizardModal({ isOpen, onClose, initialRecipient, initialSender, onComplete }) {
-  const [step, setStep] = useState(1) // 1: Names, 2: Preview & Customize, 3: Share
-  const [recInput, setRecInput] = useState(initialRecipient || 'My Love')
-  const [sendInput, setSendInput] = useState(initialSender || 'Me')
+  const [step, setStep] = useState(1)
+  const [recInput, setRecInput] = useState(initialRecipient === 'My Love' ? '' : initialRecipient || '')
+  const [sendInput, setSendInput] = useState(initialSender === 'Me' ? '' : initialSender || '')
   const [copied, setCopied] = useState(false)
 
   if (!isOpen) return null
@@ -103,7 +103,7 @@ export default function CreateGiftWizardModal({ isOpen, onClose, initialRecipien
                     required
                     value={recInput}
                     onChange={(e) => setRecInput(e.target.value)}
-                    placeholder="e.g. Dipesh, Sandhya, My Love"
+                    placeholder="e.g. Dipesh, Priya, Alex"
                     className="w-full rounded-xl border border-rose-200 dark:border-gray-600 bg-white dark:bg-gray-700 pl-10 pr-4 py-2.5 text-sm text-[#5c4a55] dark:text-gray-100 focus:border-rose-400 focus:outline-none"
                   />
                 </div>
@@ -120,7 +120,7 @@ export default function CreateGiftWizardModal({ isOpen, onClose, initialRecipien
                     required
                     value={sendInput}
                     onChange={(e) => setSendInput(e.target.value)}
-                    placeholder="e.g. Sandip, Secret Admirer"
+                    placeholder="e.g. Sandhya, Rahul, Sam"
                     className="w-full rounded-xl border border-rose-200 dark:border-gray-600 bg-white dark:bg-gray-700 pl-10 pr-4 py-2.5 text-sm text-[#5c4a55] dark:text-gray-100 focus:border-rose-400 focus:outline-none"
                   />
                 </div>
@@ -151,7 +151,7 @@ export default function CreateGiftWizardModal({ isOpen, onClose, initialRecipien
                 <p className="font-bold text-[#5c4a55] dark:text-gray-200">What {recInput} will see:</p>
                 <ul className="list-disc list-inside text-[#7a6570] dark:text-gray-300 space-y-1">
                   <li>Header: <em>"A little box of letters for {recInput}"</em></li>
-                  <li>Letters: <em>Addressing {recInput} throughout all 4 envelopes</em></li>
+                  <li>Letters: <em>Addressing {recInput} throughout all envelopes</em></li>
                   <li>Signatures: <em>"With love, {sendInput} ♥"</em></li>
                   <li>Quiz: <em>"How well do you know {recInput}?"</em></li>
                 </ul>
