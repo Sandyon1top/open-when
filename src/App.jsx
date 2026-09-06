@@ -10,6 +10,7 @@ import CreateGiftWizardModal from './components/CreateGiftWizardModal.jsx'
 import PersonalizeModal from './components/PersonalizeModal.jsx'
 import PinModal from './components/PinModal.jsx'
 import WriteReplyModal from './components/WriteReplyModal.jsx'
+import NaughtyWheel from './components/NaughtyWheel.jsx'
 import {
   STORAGE_KEY,
   defaultLetters,
@@ -47,6 +48,7 @@ export default function App() {
   const [personalization, setPersonalization] = useState(getInitialPersonalization)
   const [isPersonalizeOpen, setIsPersonalizeOpen] = useState(false)
   const [isWriteReplyOpen, setIsWriteReplyOpen] = useState(false)
+  const [isNaughtyWheelOpen, setIsNaughtyWheelOpen] = useState(false)
   const [isWizardOpen, setIsWizardOpen] = useState(false)
 
   const { recipient, sender, incomingQuizResult, incomingReplyLetter } = personalization
@@ -159,6 +161,14 @@ export default function App() {
             aria-label="Toggle Dark Theme"
           >
             {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsNaughtyWheelOpen(true)}
+            className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 px-3.5 py-2 text-xs font-bold text-white shadow-md transition hover:opacity-90"
+          >
+            🔥 Spicy Wheel
           </button>
 
           <button
@@ -308,6 +318,12 @@ export default function App() {
           setPersonalization((prev) => ({ ...prev, ...data }))
           updateUrlWithPersonalization(data.recipient, data.sender)
         }}
+      />
+      <NaughtyWheel
+        isOpen={isNaughtyWheelOpen}
+        onClose={() => setIsNaughtyWheelOpen(false)}
+        recipient={recipient}
+        sender={sender}
       />
     </div>
   )
