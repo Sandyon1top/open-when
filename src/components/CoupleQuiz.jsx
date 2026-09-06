@@ -1,10 +1,10 @@
 import confetti from 'canvas-confetti'
 import { AnimatePresence, motion } from 'framer-motion'
-import { CheckCircle2, Edit3, HelpCircle, Lock, RefreshCw, Sparkles, Trophy, XCircle } from 'lucide-react'
+import { CheckCircle2, Copy, Edit3, HelpCircle, Lock, RefreshCw, Share2, Sparkles, Trophy, XCircle } from 'lucide-react'
 import { useState } from 'react'
-import { QUIZ_ANSWERS_KEY, defaultQuizQuestions, interpolateText } from '../lettersData.js'
+import { QUIZ_ANSWERS_KEY, defaultQuizQuestions, encodeShareData, getShareableLink, interpolateText } from '../lettersData.js'
 
-export default function CoupleQuiz({ recipient, sender }) {
+export default function CoupleQuiz({ recipient, sender, incomingQuizResult }) {
   const [questions, setQuestions] = useState(() => {
     try {
       const saved = localStorage.getItem(QUIZ_ANSWERS_KEY)
@@ -22,11 +22,12 @@ export default function CoupleQuiz({ recipient, sender }) {
   })
 
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [userGuesses, setUserGuesses] = useState({}) // { [qId]: selectedIndex }
+  const [userGuesses, setUserGuesses] = useState({})
   const [isRevealed, setIsRevealed] = useState(false)
   const [score, setScore] = useState(0)
   const [quizFinished, setQuizFinished] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [copiedShareLink, setCopiedShareLink] = useState(false)
 
   const currentQ = questions[currentIndex]
 
@@ -84,6 +85,26 @@ export default function CoupleQuiz({ recipient, sender }) {
     setIsEditModalOpen(false)
   }
 
+  const handleShareResults = async () => {
+    const quizPayload = {
+      score: score,
+      total: questions.length,
+      answers: userGuesses,
+      sender: sender,
+      recipient: recipient,
+      date: new Date().toLocaleDateString(),
+    }
+    const encoded = encodeShareData(quizPayload)
+    const shareableUrl = getShareableLink(recipient, sender, { quizResult: encoded })
+    try {
+      await navigator.clipboard.writeText(shareableUrl)
+      setCopiedShareLink(true)
+      setTimeout(() => setCopiedShareLink(false), 3000)
+    } catch {
+      alert('Share Link: ' + shareableUrl)
+    }
+  }
+
   const getEvaluation = () => {
     const total = questions.length
     const pct = (score / total) * 100
@@ -95,6 +116,28 @@ export default function CoupleQuiz({ recipient, sender }) {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6">
+      {/* Shared Incoming Partner Results Banner */}
+      {incomingQuizResult && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mb-6 rounded-3xl bg-gradient-to-r from-rose-100 via-pink-100 to-violet-100 p-6 shadow-md border border-rose-200 text-center space-y-2"
+        >
+          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-rose-500 uppercase tracking-widest">
+            🏆 Incoming Quiz Results
+          </span>
+          <h3 className="font-serif text-2xl font-bold text-[#5c4a55]">
+            {incomingQuizResult.sender || 'Your Partner'} shared their Quiz Score!
+          </h3>
+          <p className="text-sm font-semibold text-rose-600">
+            Score: {incomingQuizResult.score} / {incomingQuizResult.total} Correct Answers
+          </p>
+          <p className="text-xs text-[#7a6570]">
+            Shared on {incomingQuizResult.date || 'Today'} for {recipient}!
+          </p>
+        </motion.div>
+      )}
+
       {/* Quiz Top Header Bar */}
       <div className="mb-6 flex items-center justify-between rounded-2xl bg-white/80 p-4 shadow-sm border border-rose-100">
         <div className="flex items-center gap-3">
@@ -243,11 +286,20 @@ export default function CoupleQuiz({ recipient, sender }) {
             </p>
           </div>
 
-          <div className="rounded-2xl bg-white p-6 shadow-sm border border-rose-100 max-w-sm mx-auto">
-            <p className="text-xs uppercase tracking-wider text-[#7a6570] font-semibold">Your Final Score</p>
-            <p className="mt-1 font-serif text-5xl font-extrabold text-rose-500">
+          <div className="rounded-2xl bg-white p-6 shadow-sm border border-rose-100 max-w-sm mx-auto space-y-2">
+            <p className="text-xs uppercase tracking-wider text-[#7a6570] font-semibold">Your Compatibility Score</p>
+            <p className="font-serif text-5xl font-extrabold text-rose-500">
               {score} <span className="text-2xl text-gray-400 font-normal">/ {questions.length}</span>
             </p>
+
+            <button
+              type="button"
+              onClick={handleShareResults}
+              className="mt-3 w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-500 py-2.5 text-xs font-bold text-white shadow hover:bg-emerald-600 transition"
+            >
+              {copiedShareLink ? <CheckCircle2 className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
+              {copiedShareLink ? 'Results Link Copied!' : `Share Results with ${recipient} 📲`}
+            </button>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row justify-center pt-2">

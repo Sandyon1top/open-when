@@ -6,14 +6,45 @@ export const PERSONALIZE_KEY = 'open-when:personalize'
 export const CUSTOM_LETTERS_KEY = 'open-when:custom-letters'
 export const QUIZ_ANSWERS_KEY = 'open-when:quiz-answers'
 
+export function encodeShareData(obj) {
+  try {
+    const jsonStr = JSON.stringify(obj)
+    return btoa(encodeURIComponent(jsonStr))
+  } catch {
+    return ''
+  }
+}
+
+export function decodeShareData(str) {
+  if (!str) return null
+  try {
+    const jsonStr = decodeURIComponent(atob(str))
+    return JSON.parse(jsonStr)
+  } catch {
+    return null
+  }
+}
+
 export function getInitialPersonalization() {
   if (typeof window === 'undefined') {
-    return { recipient: DEFAULT_RECIPIENT, sender: DEFAULT_SENDER }
+    return { recipient: DEFAULT_RECIPIENT, sender: DEFAULT_SENDER, incomingQuizResult: null, incomingReplyLetter: null }
   }
 
   const urlParams = new URLSearchParams(window.location.search)
   const urlTo = urlParams.get('to') || urlParams.get('recipient')
   const urlFrom = urlParams.get('from') || urlParams.get('sender')
+  const quizParam = urlParams.get('quizResult')
+  const replyParam = urlParams.get('replyLetter')
+
+  let incomingQuizResult = null
+  let incomingReplyLetter = null
+
+  if (quizParam) {
+    incomingQuizResult = decodeShareData(quizParam)
+  }
+  if (replyParam) {
+    incomingReplyLetter = decodeShareData(replyParam)
+  }
 
   if (urlTo || urlFrom) {
     const data = {
@@ -23,7 +54,7 @@ export function getInitialPersonalization() {
     try {
       localStorage.setItem(PERSONALIZE_KEY, JSON.stringify(data))
     } catch {}
-    return data
+    return { ...data, incomingQuizResult, incomingReplyLetter }
   }
 
   try {
@@ -33,11 +64,13 @@ export function getInitialPersonalization() {
       return {
         recipient: parsed.recipient || DEFAULT_RECIPIENT,
         sender: parsed.sender || DEFAULT_SENDER,
+        incomingQuizResult,
+        incomingReplyLetter,
       }
     }
   } catch {}
 
-  return { recipient: DEFAULT_RECIPIENT, sender: DEFAULT_SENDER }
+  return { recipient: DEFAULT_RECIPIENT, sender: DEFAULT_SENDER, incomingQuizResult, incomingReplyLetter }
 }
 
 export function updateUrlWithPersonalization(recipient, sender) {
@@ -58,15 +91,20 @@ export function updateUrlWithPersonalization(recipient, sender) {
   } catch {}
 }
 
-export function getShareableLink(recipient, sender) {
+export function getShareableLink(recipient, sender, extraParams = {}) {
   if (typeof window === 'undefined') return ''
-  const url = new URL(window.location.href)
+  const url = new URL(window.location.origin + window.location.pathname)
   if (recipient && recipient !== DEFAULT_RECIPIENT) {
     url.searchParams.set('to', recipient)
   }
   if (sender && sender !== DEFAULT_SENDER) {
     url.searchParams.set('from', sender)
   }
+  Object.keys(extraParams).forEach((key) => {
+    if (extraParams[key]) {
+      url.searchParams.set(key, extraParams[key])
+    }
+  })
   return url.toString()
 }
 

@@ -1,10 +1,11 @@
 import confetti from 'canvas-confetti'
-import { Heart, Sparkles, Trophy } from 'lucide-react'
+import { Heart, Send, Sparkles, Trophy } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import EnvelopeCard from './EnvelopeCard.jsx'
 import LetterModal from './LetterModal.jsx'
 import CoupleQuiz from './components/CoupleQuiz.jsx'
 import PersonalizeModal from './components/PersonalizeModal.jsx'
+import WriteReplyModal from './components/WriteReplyModal.jsx'
 import {
   STORAGE_KEY,
   defaultLetters,
@@ -55,11 +56,18 @@ export default function App() {
   const [activeLetter, setActiveLetter] = useState(null)
   const [personalization, setPersonalization] = useState(getInitialPersonalization)
   const [isPersonalizeOpen, setIsPersonalizeOpen] = useState(false)
-  const [currentLetters, setCurrentLetters] = useState(defaultLetters)
+  const [isWriteReplyOpen, setIsWriteReplyOpen] = useState(false)
 
-  const { recipient, sender } = personalization
+  const { recipient, sender, incomingQuizResult, incomingReplyLetter } = personalization
 
-  // Ensure URL is updated with recipient and sender params on load
+  const currentLetters = useMemo(() => {
+    let list = [...defaultLetters]
+    if (incomingReplyLetter) {
+      list.unshift(incomingReplyLetter)
+    }
+    return list
+  }, [incomingReplyLetter])
+
   useEffect(() => {
     updateUrlWithPersonalization(recipient, sender)
   }, [recipient, sender])
@@ -85,14 +93,14 @@ export default function App() {
     if (!alreadyOpened) {
       setOpenedIds((current) => [...current, letter.id])
     }
-    celebrate([letter.themeColor, letter.flapColor, '#FBF6F0', '#C9A27C', '#E4D4F4'])
+    celebrate([letter.themeColor || '#F8C8DC', letter.flapColor || '#F3AFC8', '#FBF6F0', '#C9A27C', '#E4D4F4'])
     setActiveLetter(letter)
   }
 
   return (
     <div className="mx-auto min-h-svh max-w-5xl px-4 pb-16 pt-6 sm:px-6">
       {/* Navigation & Personalization Top Bar */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Main Tab Switcher */}
         <div className="flex rounded-full bg-white/90 p-1.5 shadow-md border border-rose-100/80 backdrop-blur-sm self-center sm:self-auto">
           <button
@@ -115,20 +123,44 @@ export default function App() {
                 : 'text-[#7a6570] hover:text-[#5c4a55]'
             }`}
           >
-            <Trophy className="h-4 w-4" /> Couple Compatibility Quiz
+            <Trophy className="h-4 w-4" /> Couple Quiz
           </button>
         </div>
 
-        {/* Personalize Button */}
-        <button
-          type="button"
-          onClick={() => setIsPersonalizeOpen(true)}
-          className="flex items-center justify-center gap-2 rounded-full bg-white/90 px-4 py-2 text-xs font-semibold text-rose-500 shadow-md backdrop-blur-sm transition hover:bg-rose-50 border border-rose-100 self-center sm:self-auto"
-        >
-          <Sparkles className="h-4 w-4 text-rose-400" />
-          Personalize Gift 💌 {recipient !== 'My Love' ? `(For ${recipient})` : ''}
-        </button>
+        {/* Action Buttons */}
+        <div className="flex items-center justify-center gap-2 self-center sm:self-auto">
+          <button
+            type="button"
+            onClick={() => setIsWriteReplyOpen(true)}
+            className="flex items-center gap-1.5 rounded-full bg-rose-500 px-4 py-2 text-xs font-bold text-white shadow transition hover:bg-rose-600"
+          >
+            <Send className="h-3.5 w-3.5" /> Write Letter Back ✉️
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsPersonalizeOpen(true)}
+            className="flex items-center gap-1.5 rounded-full bg-white/90 px-4 py-2 text-xs font-semibold text-rose-500 shadow-md backdrop-blur-sm transition hover:bg-rose-50 border border-rose-100"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-rose-400" />
+            Personalize 💌
+          </button>
+        </div>
       </div>
+
+      {/* Shared Incoming Letter Alert Banner */}
+      {incomingReplyLetter && (
+        <div className="mb-8 rounded-3xl bg-gradient-to-r from-rose-400 via-pink-400 to-pink-500 p-6 text-white shadow-xl text-center space-y-2">
+          <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-bold uppercase tracking-widest">
+            💌 Special Letter Received!
+          </span>
+          <h3 className="font-serif text-3xl font-bold">
+            {incomingReplyLetter.sender || 'Your Partner'} wrote a personal letter for {recipient}!
+          </h3>
+          <p className="text-xs text-rose-100">
+            A new sealed envelope has been placed right at the top of your letters below. Tap it to unseal!
+          </p>
+        </div>
+      )}
 
       {activeTab === 'letters' ? (
         <>
@@ -171,11 +203,24 @@ export default function App() {
           </main>
         </>
       ) : (
-        <CoupleQuiz recipient={recipient} sender={sender} />
+        <CoupleQuiz
+          recipient={recipient}
+          sender={sender}
+          incomingQuizResult={incomingQuizResult}
+        />
       )}
 
-      <footer className="mt-12 text-center text-sm text-[#8a7380]">
-        Made with love by {sender} for {recipient}. Ready to deploy anywhere!
+      <footer className="mt-12 text-center text-sm text-[#8a7380] space-y-3">
+        <div>Made with love by {sender} for {recipient}. Ready to deploy anywhere!</div>
+        <div>
+          <button
+            type="button"
+            onClick={() => setIsWriteReplyOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-rose-100 px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-200 transition"
+          >
+            <Send className="h-3.5 w-3.5" /> Write a Love Letter Back to {sender} ✉️
+          </button>
+        </div>
       </footer>
 
       <LetterModal
@@ -191,12 +236,19 @@ export default function App() {
         recipient={recipient}
         sender={sender}
         onSave={(data) => {
-          setPersonalization(data)
+          setPersonalization((prev) => ({ ...prev, ...data }))
           updateUrlWithPersonalization(data.recipient, data.sender)
           setIsPersonalizeOpen(false)
         }}
         letters={currentLetters}
-        onUpdateLetters={(updated) => setCurrentLetters(updated)}
+        onUpdateLetters={() => {}}
+      />
+
+      <WriteReplyModal
+        isOpen={isWriteReplyOpen}
+        onClose={() => setIsWriteReplyOpen(false)}
+        recipient={sender} // When you write a letter back, recipient is the original sender!
+        sender={recipient}
       />
     </div>
   )
