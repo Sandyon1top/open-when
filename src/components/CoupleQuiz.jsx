@@ -300,6 +300,20 @@ export default function CoupleQuiz({ recipient, sender, incomingQuizResult }) {
               {copiedShareLink ? <CheckCircle2 className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
               {copiedShareLink ? 'Results Link Copied!' : `Share Results with ${recipient} 📲`}
             </button>
+            <button
+              type="button"
+              onClick={() => {
+                const quizPayload = { score, total: questions.length, answers: userGuesses, sender, recipient, date: new Date().toLocaleDateString() }
+                const encoded = encodeShareData(quizPayload)
+                const resultsUrl = getShareableLink(recipient, sender, { quizResult: encoded })
+                const emoji = score >= questions.length * 0.8 ? '\u{1F525} We are soulmates!' : score >= questions.length * 0.5 ? '\u{1F495} We know each other pretty well!' : '\u{1F605} We have more to learn!'
+                const msg = `Hey ${recipient}! I just took the Compatibility Quiz you sent me!\n\n\u{1F3C6} My Score: ${score}/${questions.length}\n${emoji}\n\nSee full results: ${resultsUrl}`
+                window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg), '_blank')
+              }}
+              className="mt-2 w-full flex items-center justify-center gap-2 rounded-xl bg-[#25D366] py-2.5 text-xs font-bold text-white shadow hover:bg-[#1da851] transition"
+            >
+              <Share2 className="h-4 w-4" /> Send My Score via WhatsApp {String.fromCodePoint(0x1F49A)}
+            </button>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row justify-center pt-2">
