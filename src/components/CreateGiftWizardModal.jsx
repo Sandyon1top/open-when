@@ -2,12 +2,16 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, Check, Copy, Gift, Heart, Send, Sparkles, User, X } from 'lucide-react'
 import { useState } from 'react'
 import { PERSONALIZE_KEY, getShareableLink, updateUrlWithPersonalization } from '../lettersData.js'
+import ContactsModal from './ContactsModal'
+import { loadContacts } from '../utils/contactStorage'
 
 export default function CreateGiftWizardModal({ isOpen, onClose, initialRecipient, initialSender, onComplete }) {
   const [step, setStep] = useState(1)
   const [recInput, setRecInput] = useState(initialRecipient === 'My Love' ? '' : initialRecipient || '')
   const [sendInput, setSendInput] = useState(initialSender === 'Me' ? '' : initialSender || '')
   const [copied, setCopied] = useState(false)
+  const [isContactsOpen, setIsContactsOpen] = useState(false)
+  const contactCount = loadContacts().length
 
   if (!isOpen) return null
 
@@ -46,6 +50,7 @@ export default function CreateGiftWizardModal({ isOpen, onClose, initialRecipien
   }
 
   return (
+    <>
     <AnimatePresence>
       <motion.div
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#5c4a55]/50 backdrop-blur-sm"
@@ -107,6 +112,14 @@ export default function CreateGiftWizardModal({ isOpen, onClose, initialRecipien
                     className="w-full rounded-xl border border-rose-200 dark:border-gray-600 bg-white dark:bg-gray-700 pl-10 pr-4 py-2.5 text-sm text-[#5c4a55] dark:text-gray-100 focus:border-rose-400 focus:outline-none"
                   />
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setIsContactsOpen(true)}
+                  className="mt-2 flex items-center gap-1.5 rounded-xl border border-rose-200 dark:border-gray-600 bg-rose-50 dark:bg-gray-700 px-3 py-1.5 text-xs font-semibold text-rose-500 dark:text-rose-300 hover:bg-rose-100 transition"
+                >
+                  <Heart className="h-3.5 w-3.5 fill-rose-300 text-rose-400" />
+                  Select from saved contacts {contactCount > 0 ? `(${contactCount})` : ''}
+                </button>
               </div>
 
               <div>
@@ -231,5 +244,12 @@ export default function CreateGiftWizardModal({ isOpen, onClose, initialRecipien
         </motion.div>
       </motion.div>
     </AnimatePresence>
+
+    <ContactsModal
+      isOpen={isContactsOpen}
+      onClose={() => setIsContactsOpen(false)}
+      onSelect={(name) => { setRecInput(name); setIsContactsOpen(false) }}
+    />
+    </>
   )
 }
