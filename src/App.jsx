@@ -10,6 +10,7 @@ import {
   defaultLetters,
   getInitialPersonalization,
   isLetterUnlocked,
+  updateUrlWithPersonalization,
 } from './lettersData.js'
 
 function loadOpenedIds() {
@@ -57,6 +58,11 @@ export default function App() {
   const [currentLetters, setCurrentLetters] = useState(defaultLetters)
 
   const { recipient, sender } = personalization
+
+  // Ensure URL is updated with recipient and sender params on load
+  useEffect(() => {
+    updateUrlWithPersonalization(recipient, sender)
+  }, [recipient, sender])
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(openedIds))
@@ -186,6 +192,7 @@ export default function App() {
         sender={sender}
         onSave={(data) => {
           setPersonalization(data)
+          updateUrlWithPersonalization(data.recipient, data.sender)
           setIsPersonalizeOpen(false)
         }}
         letters={currentLetters}

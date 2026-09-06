@@ -10,6 +10,22 @@ export function getInitialPersonalization() {
   if (typeof window === 'undefined') {
     return { recipient: DEFAULT_RECIPIENT, sender: DEFAULT_SENDER }
   }
+
+  const urlParams = new URLSearchParams(window.location.search)
+  const urlTo = urlParams.get('to') || urlParams.get('recipient')
+  const urlFrom = urlParams.get('from') || urlParams.get('sender')
+
+  if (urlTo || urlFrom) {
+    const data = {
+      recipient: urlTo || DEFAULT_RECIPIENT,
+      sender: urlFrom || DEFAULT_SENDER,
+    }
+    try {
+      localStorage.setItem(PERSONALIZE_KEY, JSON.stringify(data))
+    } catch {}
+    return data
+  }
+
   try {
     const raw = localStorage.getItem(PERSONALIZE_KEY)
     if (raw) {
@@ -20,7 +36,38 @@ export function getInitialPersonalization() {
       }
     }
   } catch {}
+
   return { recipient: DEFAULT_RECIPIENT, sender: DEFAULT_SENDER }
+}
+
+export function updateUrlWithPersonalization(recipient, sender) {
+  if (typeof window === 'undefined') return
+  try {
+    const url = new URL(window.location.href)
+    if (recipient && recipient !== DEFAULT_RECIPIENT) {
+      url.searchParams.set('to', recipient)
+    } else {
+      url.searchParams.delete('to')
+    }
+    if (sender && sender !== DEFAULT_SENDER) {
+      url.searchParams.set('from', sender)
+    } else {
+      url.searchParams.delete('from')
+    }
+    window.history.replaceState({}, '', url.toString())
+  } catch {}
+}
+
+export function getShareableLink(recipient, sender) {
+  if (typeof window === 'undefined') return ''
+  const url = new URL(window.location.href)
+  if (recipient && recipient !== DEFAULT_RECIPIENT) {
+    url.searchParams.set('to', recipient)
+  }
+  if (sender && sender !== DEFAULT_SENDER) {
+    url.searchParams.set('from', sender)
+  }
+  return url.toString()
 }
 
 export function interpolateText(text, recipient = DEFAULT_RECIPIENT, sender = DEFAULT_SENDER) {
