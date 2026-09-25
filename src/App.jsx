@@ -1,5 +1,5 @@
 import confetti from 'canvas-confetti'
-import { Compass, Gift, Heart, Moon, Send, Sparkles, Sun, Trophy } from 'lucide-react'
+import { Compass, Gift, Globe2, Heart, Moon, Send, Sparkles, Sun, Trophy } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import EnvelopeCard from './EnvelopeCard.jsx'
 import LetterModal from './LetterModal.jsx'
@@ -12,6 +12,7 @@ import PinModal from './components/PinModal.jsx'
 import WriteReplyModal from './components/WriteReplyModal.jsx'
 import NaughtyWheel from './components/NaughtyWheel.jsx'
 import TarotReading from './components/TarotReading.jsx'
+import LdrCommandCenter from './components/LdrCommandCenter.jsx'
 import {
   STORAGE_KEY,
   defaultLetters,
@@ -126,6 +127,17 @@ export default function App() {
             }`}
           >
             <Heart className="h-3.5 w-3.5 fill-current" /> Letters
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('ldr')}
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-semibold transition ${
+              activeTab === 'ldr'
+                ? 'bg-gradient-to-r from-rose-500 via-purple-600 to-indigo-600 text-white shadow'
+                : 'text-[#7a6570] dark:text-gray-300 hover:text-[#5c4a55]'
+            }`}
+          >
+            <Globe2 className="h-3.5 w-3.5" /> LDR Hub 🌍
           </button>
           <button
             type="button"
@@ -251,6 +263,8 @@ export default function App() {
             ))}
           </main>
         </>
+      ) : activeTab === 'ldr' ? (
+        <LdrCommandCenter recipient={recipient} sender={sender} />
       ) : activeTab === 'tarot' ? (
         <TarotReading recipient={recipient} sender={sender} />
       ) : activeTab === 'quiz' ? (
