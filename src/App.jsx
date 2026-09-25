@@ -11,6 +11,7 @@ import PersonalizeModal from './components/PersonalizeModal.jsx'
 import PinModal from './components/PinModal.jsx'
 import WriteReplyModal from './components/WriteReplyModal.jsx'
 import NaughtyWheel from './components/NaughtyWheel.jsx'
+import TarotReading from './components/TarotReading.jsx'
 import {
   STORAGE_KEY,
   defaultLetters,
@@ -114,11 +115,11 @@ export default function App() {
       {/* Premium Sticky Navbar */}
       <div className="sticky top-4 z-40 mb-10 flex flex-col gap-4 rounded-3xl bg-white/70 dark:bg-gray-900/70 p-4 shadow-xl backdrop-blur-md border border-white/50 dark:border-gray-700/50 sm:flex-row sm:items-center sm:justify-between">
         {/* Navigation Tabs */}
-        <div className="flex rounded-full bg-white/90 dark:bg-gray-800/90 p-1.5 shadow-md border border-rose-100/80 dark:border-gray-700 backdrop-blur-sm self-center sm:self-auto">
+        <div className="flex flex-wrap rounded-full bg-white/90 dark:bg-gray-800/90 p-1.5 shadow-md border border-rose-100/80 dark:border-gray-700 backdrop-blur-sm self-center sm:self-auto justify-center">
           <button
             type="button"
             onClick={() => setActiveTab('letters')}
-            className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition ${
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-semibold transition ${
               activeTab === 'letters'
                 ? 'bg-gradient-to-r from-rose-400 to-pink-500 text-white shadow'
                 : 'text-[#7a6570] dark:text-gray-300 hover:text-[#5c4a55]'
@@ -128,8 +129,19 @@ export default function App() {
           </button>
           <button
             type="button"
+            onClick={() => setActiveTab('tarot')}
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-semibold transition ${
+              activeTab === 'tarot'
+                ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow'
+                : 'text-[#7a6570] dark:text-gray-300 hover:text-[#5c4a55]'
+            }`}
+          >
+            <Sparkles className="h-3.5 w-3.5" /> Tarot Oracle 🔮
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab('quiz')}
-            className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition ${
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-semibold transition ${
               activeTab === 'quiz'
                 ? 'bg-gradient-to-r from-rose-400 to-pink-500 text-white shadow'
                 : 'text-[#7a6570] dark:text-gray-300 hover:text-[#5c4a55]'
@@ -140,7 +152,7 @@ export default function App() {
           <button
             type="button"
             onClick={() => setActiveTab('bucket')}
-            className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition ${
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-semibold transition ${
               activeTab === 'bucket'
                 ? 'bg-gradient-to-r from-rose-400 to-pink-500 text-white shadow'
                 : 'text-[#7a6570] dark:text-gray-300 hover:text-[#5c4a55]'
@@ -239,6 +251,8 @@ export default function App() {
             ))}
           </main>
         </>
+      ) : activeTab === 'tarot' ? (
+        <TarotReading recipient={recipient} sender={sender} />
       ) : activeTab === 'quiz' ? (
         <CoupleQuiz
           recipient={recipient}
