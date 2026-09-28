@@ -1,14 +1,20 @@
 import confetti from 'canvas-confetti'
 import {
   Calendar,
+  Camera,
   Check,
   CheckCircle2,
+  Clock,
+  Compass,
   Edit2,
+  Gamepad2,
   Globe2,
   Heart,
   Lock,
   MessageCircleHeart,
+  Mic,
   Moon,
+  Music,
   Plane,
   Plus,
   Radio,
@@ -27,6 +33,10 @@ import {
   WORLD_CITIES,
   calculateDistanceKm,
 } from '../data/ldrData.js'
+import LocketPolaroid from './LocketPolaroid.jsx'
+import LdrMiniGames from './LdrMiniGames.jsx'
+import ReunionFlightTracker from './ReunionFlightTracker.jsx'
+import VoiceAndSoundtrack from './VoiceAndSoundtrack.jsx'
 
 const STORAGE_LDR_CONFIG = 'open_when_ldr_config_v1'
 const STORAGE_LDR_QA = 'open_when_ldr_qa_answers_v1'
@@ -101,6 +111,9 @@ export default function LdrCommandCenter({ recipient = 'My Love', sender = 'Me' 
 
   // Random Date Idea State
   const [currentDateIdeaIndex, setCurrentDateIdeaIndex] = useState(0)
+
+  // Sub-Navigation Tab State
+  const [ldrSubTab, setLdrSubTab] = useState('all')
 
   // Tick clock every second
   useEffect(() => {
@@ -286,31 +299,63 @@ export default function LdrCommandCenter({ recipient = 'My Love', sender = 'Me' 
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      {/* 🌍 1. DUAL TIMEZONE & DISTANCE BRIDGE */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 p-6 sm:p-8 text-white shadow-2xl border border-purple-500/30">
-        <div className="absolute -top-16 -right-16 h-72 w-72 rounded-full bg-rose-500/15 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-16 -left-16 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl pointer-events-none" />
+      {/* Sub-Navigation Switcher Bar */}
+      <div className="flex flex-wrap items-center justify-center gap-2 rounded-3xl bg-white/80 dark:bg-gray-800/80 p-2 shadow-lg border border-purple-100 dark:border-gray-700 backdrop-blur-md">
+        {[
+          { id: 'all', label: '🌟 Full LDR Suite', icon: Sparkles },
+          { id: 'clocks', label: '🌐 Radar & Clocks', icon: Globe2 },
+          { id: 'locket', label: '📸 Live Locket & Photos', icon: Camera },
+          { id: 'voice', label: '🎙️ Voice & Jam', icon: Mic },
+          { id: 'games', label: '🎲 Mini-Games Studio', icon: Gamepad2 },
+          { id: 'flight', label: '✈️ Reunion & Flight Arc', icon: Plane },
+        ].map((tab) => {
+          const TabIcon = tab.icon
+          const isActive = ldrSubTab === tab.id
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setLdrSubTab(tab.id)}
+              className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold transition ${
+                isActive
+                  ? 'bg-gradient-to-r from-rose-500 via-purple-600 to-indigo-600 text-white shadow-md scale-105'
+                  : 'text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
+              }`}
+            >
+              <TabIcon className="h-3.5 w-3.5" />
+              {tab.label}
+            </button>
+          )
+        })}
+      </div>
 
-        {/* Top Header & Settings */}
-        <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/10 pb-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-rose-500 to-purple-600 text-white shadow-lg">
-              <Globe2 className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-widest text-rose-300">
-                  LDR Command Bridge
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/20 px-2 py-0.5 text-[10px] font-semibold text-rose-200 border border-rose-400/30">
-                  <Radio className="h-2.5 w-2.5 animate-pulse text-rose-400" /> Live Sync
-                </span>
+      {/* 🌍 1. DUAL TIMEZONE & DISTANCE BRIDGE */}
+      {(ldrSubTab === 'all' || ldrSubTab === 'clocks') && (
+        <>
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 p-6 sm:p-8 text-white shadow-2xl border border-purple-500/30">
+            <div className="absolute -top-16 -right-16 h-72 w-72 rounded-full bg-rose-500/15 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-16 -left-16 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl pointer-events-none" />
+
+            {/* Top Header & Settings */}
+            <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/10 pb-5">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-rose-500 to-purple-600 text-white shadow-lg">
+                  <Globe2 className="h-5 w-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-rose-300">
+                      LDR Command Bridge
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/20 px-2 py-0.5 text-[10px] font-semibold text-rose-200 border border-rose-400/30">
+                      <Radio className="h-2.5 w-2.5 animate-pulse text-rose-400" /> Live Sync
+                    </span>
+                  </div>
+                  <h3 className="font-serif text-2xl sm:text-3xl font-extrabold">
+                    {sender} & {recipient}
+                  </h3>
+                </div>
               </div>
-              <h3 className="font-serif text-2xl sm:text-3xl font-extrabold">
-                {sender} & {recipient}
-              </h3>
-            </div>
-          </div>
 
           <button
             type="button"
@@ -722,6 +767,33 @@ export default function LdrCommandCenter({ recipient = 'My Love', sender = 'Me' 
           )
         })()}
       </div>
+        </>
+      )}
+
+      {/* 📸 2. LIVE LOCKET & POLAROID MEMORIES */}
+      {(ldrSubTab === 'all' || ldrSubTab === 'locket') && (
+        <LocketPolaroid sender={sender} recipient={recipient} senderCity={senderCity} />
+      )}
+
+      {/* 🎙️ 3. VOICE CAPSULES & COUPLE SOUNDTRACK */}
+      {(ldrSubTab === 'all' || ldrSubTab === 'voice') && (
+        <VoiceAndSoundtrack sender={sender} recipient={recipient} senderCity={senderCity} />
+      )}
+
+      {/* 🎲 4. LDR MINI-GAMES STUDIO */}
+      {(ldrSubTab === 'all' || ldrSubTab === 'games') && (
+        <LdrMiniGames sender={sender} recipient={recipient} />
+      )}
+
+      {/* ✈️ 5. REUNION & FLIGHT ARC TRACKER */}
+      {(ldrSubTab === 'all' || ldrSubTab === 'flight') && (
+        <ReunionFlightTracker
+          sender={sender}
+          recipient={recipient}
+          senderCity={senderCity}
+          recipientCity={recipientCity}
+        />
+      )}
 
       {/* MODAL: TIMEZONE & CITY PICKER */}
       {isCityModalOpen && (
@@ -761,7 +833,7 @@ export default function LdrCommandCenter({ recipient = 'My Love', sender = 'Me' 
                 >
                   {WORLD_CITIES.map((c) => (
                     <option key={c.city} value={c.city}>
-                      {c.flag} {c.city}, {c.country} ({c.timezone})
+                      {c.flag} {c.city}, {c.country} • {c.label || c.timezone}
                     </option>
                   ))}
                 </select>
@@ -781,7 +853,7 @@ export default function LdrCommandCenter({ recipient = 'My Love', sender = 'Me' 
                 >
                   {WORLD_CITIES.map((c) => (
                     <option key={c.city} value={c.city}>
-                      {c.flag} {c.city}, {c.country} ({c.timezone})
+                      {c.flag} {c.city}, {c.country} • {c.label || c.timezone}
                     </option>
                   ))}
                 </select>
